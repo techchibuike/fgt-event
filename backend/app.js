@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ app.get('/health', async (req, res) => {
 
     res.status(200).json({
         status: 'UP',
+        environment: process.env.NODE_ENV || 'development',
         timestamp: new Date().toISOString(),
         databases: {
             mysql: mysqlStatus,
@@ -46,6 +48,17 @@ app.get('/health', async (req, res) => {
     });
 });
 
+// Basic error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;
