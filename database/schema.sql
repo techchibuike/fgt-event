@@ -11,11 +11,13 @@ CREATE TABLE contestants (
   photo_url VARCHAR(255),
   video_url VARCHAR(255),
   social_media JSON,
-  status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+  status ENUM('Pending', 'Screened', 'Qualified', 'Finalist', 'Eliminated', 'Winner', 'Runner-up') DEFAULT 'Pending',
   contestant_number INT UNIQUE,
   referral_code VARCHAR(50) UNIQUE,
   total_votes INT DEFAULT 0,
   tickets_sold INT DEFAULT 0,
+  judges_score DECIMAL(5,2) DEFAULT 0.00,
+  referral_count INT DEFAULT 0,
   rejection_reason TEXT,
   submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   reviewed_by INT,
@@ -81,7 +83,7 @@ CREATE TABLE voting_rounds (
   round_name VARCHAR(50) NOT NULL,
   start_time DATETIME NOT NULL,
   end_time DATETIME NOT NULL,
-  is_active BOOLEAN GENERATED ALWAYS AS (NOW() BETWEEN start_time AND end_time) STORED,
+  is_active BOOLEAN DEFAULT FALSE,
   UNIQUE KEY unique_round (round_number)
 );
 
@@ -106,6 +108,16 @@ CREATE TABLE fraud_alerts (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_resolved (resolved)
 );
+
+CREATE TABLE system_settings (
+  setting_key VARCHAR(50) PRIMARY KEY,
+  setting_value VARCHAR(100) NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Initialize with Registration Phase
+INSERT INTO system_settings (setting_key, setting_value) VALUES ('current_phase', '1');
+INSERT INTO system_settings (setting_key, setting_value) VALUES ('voting_active', 'false');
 
 -- Supabase Schema (PostgreSQL)
 

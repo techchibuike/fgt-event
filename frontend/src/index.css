@@ -1,3 +1,75 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-gold-50: #fffbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-gold-800: #92400e;
+  --color-gold-900: #78350f;
+  --color-gold-950: #451a03;
+
+  --color-dark-inner: #0a0a0a;
+  --color-dark-outer: #050505;
+
+  --font-oswald: "Oswald", sans-serif;
+  --font-inter: "Inter", sans-serif;
+
+  --animate-marquee: marquee 30s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-neutral-950 text-neutral-100 font-inter antialiased;
+}
+
+.text-outline {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+  color: transparent;
+}
+
+.gold-gradient {
+  @apply bg-gradient-to-r from-gold-400 via-gold-200 to-gold-500 bg-clip-text text-transparent;
+}
+
+.gold-bg-gradient {
+  @apply bg-gradient-to-r from-gold-600 via-gold-400 to-gold-700;
+}
+
+.glass-pill {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-full;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}

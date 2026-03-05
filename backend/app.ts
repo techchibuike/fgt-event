@@ -1,31 +1,42 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const dotenv = require('dotenv');
-const path = require('path');
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+// Since we are using ES Modules/TS, we need to handle __dirname manually if needed
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const mysql = require('./services/mysql');
-const supabase = require('./services/supabase');
+import pool from './services/mysql.js';
+import supabase from './services/supabase.js';
+import contestantRoutes from './routes/contestants.js';
+import settingsRoutes from './routes/settings.js';
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Routes
+app.use('/api/contestants', contestantRoutes);
+app.use('/api/settings', settingsRoutes);
+
 // Health check endpoint
-app.get('/health', async (req, res) => {
+app.get('/health', async (req: Request, res: Response) => {
     let mysqlStatus = 'DOWN';
     let supabaseStatus = 'DOWN';
 
     try {
-        const connection = await mysql.getConnection();
+        const connection = await pool.getConnection();
         mysqlStatus = 'UP';
         connection.release();
-    } catch (err) {
+    } catch (err: any) {
         console.error('MySQL health check failed:', err.message);
     }
 
@@ -33,7 +44,7 @@ app.get('/health', async (req, res) => {
         const { data, error } = await supabase.from('votes').select('*', { count: 'exact', head: true });
         if (!error) supabaseStatus = 'UP';
         else console.error('Supabase error:', error.message);
-    } catch (err) {
+    } catch (err: any) {
         console.error('Supabase health check failed:', err.message);
     }
 
@@ -49,7 +60,7 @@ app.get('/health', async (req, res) => {
 });
 
 // Basic error handler
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).json({
         error: 'Internal Server Error',
@@ -61,4 +72,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;
