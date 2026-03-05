@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import pool from '../services/mysql.js';
+import { sendEmail } from '../services/email.js';
 
 /**
  * @desc    Submit a new contestant registration
@@ -35,6 +36,21 @@ export const register = async (req: Request, res: Response) => {
             contestant_number: nextNumber,
             referral_code: referralCode
         });
+
+        // Background: Send Confirmation Email
+        try {
+            await sendEmail(
+                email,
+                'FGT 2.0 - Application Received! 🎤',
+                `<h1>Welcome to the Stage, ${stage_name}!</h1>
+                <p>Your application for FUTO GOT TALENT 2026 has been received.</p>
+                <p><strong>Contestant Number:</strong> ${nextNumber}</p>
+                <p><strong>Referral Code:</strong> ${referralCode}</p>
+                <p>Our team will review your submission and contact you soon.</p>`
+            );
+        } catch (mailErr) {
+            console.error('Email notification failed but registration saved:', mailErr);
+        }
     } catch (err: any) {
         console.error('Registration Error:', err.message);
         if (err.code === 'ER_DUP_ENTRY') {
