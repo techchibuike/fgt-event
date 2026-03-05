@@ -1,0 +1,64 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+dotenv.config();
+// Since we are using ES Modules/TS, we need to handle __dirname manually if needed
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+const app = express();
+const PORT = process.env.PORT || 3000;
+import pool from './services/mysql.js';
+import supabase from './services/supabase.js';
+import contestantRoutes from './routes/contestants.js';
+import settingsRoutes from './routes/settings.js';
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+// Routes
+app.use('/api/contestants', contestantRoutes);
+app.use('/api/settings', settingsRoutes);
+// Health check endpoint
+app.get('/health', async (req, res) => {
+    let mysqlStatus = 'DOWN';
+    let supabaseStatus = 'DOWN';
+    try {
+        const connection = await pool.getConnection();
+        mysqlStatus = 'UP';
+        connection.release();
+    }
+    catch (err) {
+        console.error('MySQL health check failed:', err.message);
+    }
+    try {
+        const { data, error } = await supabase.from('votes').select('*', { count: 'exact', head: true });
+        if (!error)
+            supabaseStatus = 'UP';
+        else
+            console.error('Supabase error:', error.message);
+    }
+    catch (err) {
+        console.error('Supabase health check failed:', err.message);
+    }
+    res.status(200).json({
+        status: 'UP',
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString(),
+        databases: {
+            mysql: mysqlStatus,
+            supabase: supabaseStatus
+        }
+    });
+});
+// Basic error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
+    });
+});
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+export default app;
