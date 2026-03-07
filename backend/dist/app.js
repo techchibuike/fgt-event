@@ -14,6 +14,7 @@ import supabase from './services/supabase.js';
 import authRoutes from './routes/auth.js';
 import contestantRoutes from './routes/contestants.js';
 import settingsRoutes from './routes/settings.js';
+import paymentRoutes from './routes/payments.js';
 app.use(helmet());
 app.use(cors({
     origin: ['http://localhost:5173', 'https://fgt.alphoch.com', 'https://alphoch.com'],
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/contestants', contestantRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/payments', paymentRoutes);
 // Health check endpoint
 app.get('/health', async (req, res) => {
     let mysqlStatus = 'DOWN';

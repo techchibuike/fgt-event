@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import pool from '../services/mysql.js';
+import { protectAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -32,11 +33,13 @@ router.get('/phase', async (req: Request, res: Response) => {
 
 /**
  * @route   PATCH /api/settings/phase
- * @desc    Update current event phase (Admin Only - Auth Middleware pending)
+ * @desc    Update current event phase (Admin Only)
  * @access  Private
  */
-router.patch('/phase', async (req: Request, res: Response) => {
-    const { phase, voting_active } = req.body;
+router.patch('/phase', protectAdmin, async (req: Request, res: Response) => {
+    const body = req.body as any;
+    const phase = body.phase;
+    const voting_active = body.voting_active;
 
     try {
         if (phase) {

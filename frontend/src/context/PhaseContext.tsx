@@ -17,7 +17,7 @@ interface PhaseContextType {
     setPhase: (phase: number) => void;
 }
 
-const defaultPhaseData: Record<number, PhaseInfo> = {
+export const defaultPhaseData: Record<number, PhaseInfo> = {
     1: {
         title: "FUTO'S GOT TALENT",
         cta: "Register Now",
@@ -84,10 +84,10 @@ export const PhaseProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const fetchPhase = async () => {
         try {
-            const response = await api.get('/settings/phase');
+            // const response = await api.get('/settings/phase');
             // setPhaseState(response.data.phase);
             // User override for testing: setPhaseState(2);
-            setPhaseState(response.data.phase || 1);
+            setPhaseState(3);
         } catch (err) {
             console.error('Failed to fetch event phase:', err);
         } finally {

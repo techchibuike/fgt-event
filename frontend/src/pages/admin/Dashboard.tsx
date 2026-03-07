@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import ContestantTable from '../../components/admin/ContestantTable';
+import PhaseController from '../../components/admin/PhaseController';
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
@@ -10,6 +11,7 @@ const Dashboard: React.FC = () => {
         pending: 0,
         qualified: 0
     });
+    const [currentPhase, setCurrentPhase] = useState<number>(1);
     const [loading, setLoading] = useState(true);
 
     const checkAuth = async () => {
@@ -21,6 +23,11 @@ const Dashboard: React.FC = () => {
                 pending: contestants.filter((c: any) => c.status === 'Pending').length,
                 qualified: contestants.filter((c: any) => c.status === 'Qualified').length
             });
+
+            // Fetch current phase
+            const phaseResponse = await api.get('/settings/phase');
+            setCurrentPhase(phaseResponse.data.phase);
+
             setLoading(false);
         } catch (err) {
             // Unauthorised or session expired
@@ -75,6 +82,10 @@ const Dashboard: React.FC = () => {
             </div>
 
             <main className="max-w-[1600px] mx-auto p-8 space-y-12">
+
+                {/* Phase Control */}
+                <PhaseController currentPhasePhase={currentPhase} onPhaseChange={checkAuth} />
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[

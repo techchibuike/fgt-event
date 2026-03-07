@@ -1,5 +1,6 @@
 import express from 'express';
 import pool from '../services/mysql.js';
+import { protectAdmin } from '../middleware/authMiddleware.js';
 const router = express.Router();
 /**
  * @route   GET /api/settings/phase
@@ -25,11 +26,13 @@ router.get('/phase', async (req, res) => {
 });
 /**
  * @route   PATCH /api/settings/phase
- * @desc    Update current event phase (Admin Only - Auth Middleware pending)
+ * @desc    Update current event phase (Admin Only)
  * @access  Private
  */
-router.patch('/phase', async (req, res) => {
-    const { phase, voting_active } = req.body;
+router.patch('/phase', protectAdmin, async (req, res) => {
+    const body = req.body;
+    const phase = body.phase;
+    const voting_active = body.voting_active;
     try {
         if (phase) {
             await pool.query('INSERT INTO system_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?', ['current_phase', phase.toString(), phase.toString()]);

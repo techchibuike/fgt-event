@@ -1,18 +1,22 @@
+import React, { useState, useEffect } from 'react';
 import { usePhase } from '../context/PhaseContext';
+import { api } from '../services/api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ContestantCard from '../components/ContestantCard';
+import VotingModal from '../components/VotingModal';
 
 // Shared Components
 interface SectionHeaderProps {
     number: string;
     title: string;
     subtitle: string;
-    align?: 'left' | 'right';
+    align?: 'left' | 'center' | 'right';
 }
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ number, title, subtitle, align = 'left' }) => (
-    <div className={`flex flex-col md:flex-row ${align === 'right' ? 'md:flex-row-reverse' : ''} md:items-end justify-between mb-16 gap-6 border-b border-white/10 pb-8`}>
-        <div className={`flex flex-col ${align === 'right' ? 'items-end' : 'items-start'} gap-2`}>
+    <div className={`flex flex-col md:flex-row ${align === 'right' ? 'md:flex-row-reverse' : align === 'center' ? 'md:flex-col items-center text-center' : ''} md:items-end justify-between mb-16 gap-6 border-b border-white/10 pb-8`}>
+        <div className={`flex flex-col ${align === 'right' ? 'items-end' : align === 'center' ? 'items-center' : 'items-start'} gap-2`}>
             <div className="flex items-center gap-3 mb-2">
                 <span className="w-8 h-[2px] bg-gold-500"></span>
                 <span className="text-gold-500 font-mono text-lg font-bold tracking-widest uppercase">{number}</span>
@@ -34,9 +38,31 @@ interface PhaseInfo {
 }
 
 const Home: React.FC = () => {
-    const { phase, current, loading } = usePhase();
+    const { phase, current, loading: phaseLoading } = usePhase();
+    const [contestants, setContestants] = useState<any[]>([]);
+    const [loadingContestants, setLoadingContestants] = useState(true);
+    const [votingContestant, setVotingContestant] = useState<any | null>(null);
 
-    if (loading) return <div className="min-h-screen bg-neutral-950 flex items-center justify-center"><div className="w-12 h-12 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div></div>;
+    useEffect(() => {
+        const fetchContestants = async () => {
+            try {
+                const response = await api.get('/contestants');
+                setContestants(response.data);
+            } catch (err) {
+                console.error("Failed to load contestants:", err);
+            } finally {
+                setLoadingContestants(false);
+            }
+        };
+
+        if (current.sections.includes('Showcase')) {
+            fetchContestants();
+        } else {
+            setLoadingContestants(false);
+        }
+    }, [current]);
+
+    if (phaseLoading) return <div className="min-h-screen bg-neutral-950 flex items-center justify-center"><div className="w-12 h-12 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div></div>;
 
     return (
         <div className="min-h-screen bg-neutral-950 text-white overflow-x-hidden">
@@ -266,14 +292,33 @@ const Home: React.FC = () => {
                 </section>
             )}
 
-            {/* Future Section Placeholders */}
+            {/* Showcase Gallery */}
             {current.sections.includes('Showcase') && (
-                <section className="py-32 text-center border-t border-white/5 bg-neutral-950" id="gallery">
-                    <div className="max-w-4xl mx-auto px-6" id="contestants">
-                        <SectionHeader number="05" title="THE SHOWCASE" subtitle="TALENT GALLERY" />
-                        <div className="p-24 border border-white/5 bg-white/1 rounded-3xl">
-                            <p className="text-white/40 uppercase tracking-widest font-bold italic">Gallery loading... Meeting the stars soon.</p>
-                        </div>
+                <section className="py-32 bg-neutral-950 border-t border-white/5 relative" id="gallery">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[500px] bg-gold-900/10 blur-[120px] rounded-[100%] pointer-events-none"></div>
+
+                    <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-10" id="contestants">
+                        <SectionHeader number="05" title="THE SHOWCASE" subtitle="TALENT GALLERY" align="center" />
+
+                        {loadingContestants ? (
+                            <div className="py-24 flex justify-center">
+                                <div className="w-12 h-12 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        ) : contestants.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {contestants.map((c: any) => (
+                                    <ContestantCard
+                                        key={c.id}
+                                        contestant={c}
+                                        onVoteClick={(contestant) => setVotingContestant(contestant)}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-24 border border-white/5 bg-white/5 rounded-3xl text-center">
+                                <p className="text-white/40 uppercase tracking-widest font-bold italic">No contestants have been approved for the showcase yet. Check back soon!</p>
+                            </div>
+                        )}
                     </div>
                 </section>
             )}
@@ -302,6 +347,14 @@ const Home: React.FC = () => {
 
             {/* Footer */}
             <Footer />
+
+            {/* Voting Modal */}
+            {votingContestant && (
+                <VotingModal
+                    contestant={votingContestant}
+                    onClose={() => setVotingContestant(null)}
+                />
+            )}
         </div>
     );
 };

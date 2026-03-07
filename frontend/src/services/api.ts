@@ -11,6 +11,7 @@ const api = axios.create({
 });
 
 export const registerContestant = (data: any) => api.post('/contestants/register', data);
+export const getPublicContestants = () => api.get('/contestants');
 export const getHealth = () => api.get('/health');
 
 export default api;
