@@ -22,6 +22,7 @@ app.use(cors({
         'http://localhost:5174',
         'https://fgt.alphoch.com',
         'https://www.fgt.alphoch.com',
+        'https://fgt-event.vercel.app',
         /\.vercel\.app$/
     ],
     credentials: true
