@@ -24,7 +24,7 @@ import paymentRoutes from './routes/payments.js';
 
 app.use(helmet());
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://fgt.alphoch.com', 'https://alphoch.com'],
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'https://fgt.alphoch.com', 'https://www.fgt.alphoch.com'],
     credentials: true
 }));
 app.use(express.json());
