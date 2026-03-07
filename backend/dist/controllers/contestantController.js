@@ -6,7 +6,7 @@ import { sendEmail } from '../services/email.js';
  */
 export const register = async (req, res) => {
     try {
-        const { full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, social_media } = req.body;
+        const { full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, state_of_origin, department, social_media } = req.body;
         // Basic validation
         if (!full_name || !email || !talent_category) {
             res.status(400).json({ error: 'Missing required fields' });
@@ -17,7 +17,7 @@ export const register = async (req, res) => {
         const nextNumber = (rows[0].max_num || 1000) + 1;
         // Generate referral code
         const referralCode = stage_name.toLowerCase().replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(2, 5);
-        const [result] = await pool.query('INSERT INTO contestants (full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, social_media, contestant_number, referral_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, JSON.stringify(social_media), nextNumber, referralCode]);
+        const [result] = await pool.query('INSERT INTO contestants (full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, state_of_origin, department, social_media, contestant_number, referral_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, state_of_origin, department, JSON.stringify(social_media), nextNumber, referralCode]);
         res.status(201).json({
             message: 'Registration successful',
             contestant_number: nextNumber,
@@ -25,9 +25,11 @@ export const register = async (req, res) => {
         });
         // Background: Send Confirmation Email
         try {
-            await sendEmail(email, 'FGT 2.0 - Application Received! 🎤', `<h1>Welcome to the Stage, ${stage_name}!</h1>
-                <p>Your application for FUTO GOT TALENT 2026 has been received.</p>
+            await sendEmail(email, "FGT 2.0 - Application Received! 🎤", `<h1>Welcome to the Stage, ${stage_name}!</h1>
+                <p>Your application for FUTO'S GOT TALENT 2026 has been received.</p>
                 <p><strong>Contestant Number:</strong> ${nextNumber}</p>
+                <p><strong>Department:</strong> ${department}</p>
+                <p><strong>Talent:</strong> ${talent_category}</p>
                 <p><strong>Referral Code:</strong> ${referralCode}</p>
                 <p>Our team will review your submission and contact you soon.</p>`);
         }

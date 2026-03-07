@@ -88,7 +88,7 @@ const Home: React.FC = () => {
                             <div key={i} className="flex items-center gap-12 px-6">
                                 <span className="text-4xl font-oswald font-black uppercase italic text-white/20 tracking-tighter">UNLEASH CREATIVITY</span>
                                 <span className="text-4xl text-gold-500 opacity-30">★</span>
-                                <span className="text-4xl font-oswald font-black uppercase italic text-white/20 tracking-tighter">THE TITAN ASCENDS</span>
+                                <span className="text-4xl font-oswald font-black uppercase italic text-white/20 tracking-tighter">THE STARS ALIGN</span>
                                 <span className="text-4xl text-gold-500 opacity-30">★</span>
                                 <span className="text-4xl font-oswald font-black uppercase italic text-white/20 tracking-tighter">WIN 200K CASH</span>
                                 <span className="text-4xl text-gold-500 opacity-30">★</span>
@@ -272,7 +272,7 @@ const Home: React.FC = () => {
                     <div className="max-w-4xl mx-auto px-6" id="contestants">
                         <SectionHeader number="05" title="THE SHOWCASE" subtitle="TALENT GALLERY" />
                         <div className="p-24 border border-white/5 bg-white/1 rounded-3xl">
-                            <p className="text-white/40 uppercase tracking-widest font-bold italic">Gallery loading... Meeting the titans soon.</p>
+                            <p className="text-white/40 uppercase tracking-widest font-bold italic">Gallery loading... Meeting the stars soon.</p>
                         </div>
                     </div>
                 </section>

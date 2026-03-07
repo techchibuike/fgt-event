@@ -51,7 +51,7 @@ const About: React.FC = () => {
                                     <span className="text-gold-500 font-bold text-2xl">✓</span>
                                 </div>
                                 <div>
-                                    <h4 className="text-xl font-bold text-white uppercase tracking-tight mb-2 italic">Titan Empowerment</h4>
+                                    <h4 className="text-xl font-bold text-white uppercase tracking-tight mb-2 italic">Talent Empowerment</h4>
                                     <p className="text-white/50 text-lg leading-relaxed">Win substantial funding, recording deals, and professional mentorship to launch your professional career.</p>
                                 </div>
                             </div>

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 // Since we are using ES Modules/TS, we need to handle __dirname manually if needed
 // const __filename = fileURLToPath(import.meta.url);
@@ -10,12 +11,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 import pool from './services/mysql.js';
 import supabase from './services/supabase.js';
+import authRoutes from './routes/auth.js';
 import contestantRoutes from './routes/contestants.js';
 import settingsRoutes from './routes/settings.js';
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://fgt.alphoch.com', 'https://alphoch.com'],
+    credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/contestants', contestantRoutes);
 app.use('/api/settings', settingsRoutes);
 // Health check endpoint

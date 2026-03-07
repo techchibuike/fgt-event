@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import pool from '../services/mysql.js';
+import { protectAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -11,7 +12,8 @@ const router = express.Router();
 router.post('/register', async (req: Request, res: Response) => {
     const {
         full_name, stage_name, email, phone,
-        talent_category, bio, photo_url, video_url, social_media
+        talent_category, bio, photo_url, video_url,
+        state_of_origin, department, social_media
     } = req.body;
 
     try {
@@ -21,50 +23,49 @@ router.post('/register', async (req: Request, res: Response) => {
         );
 
         if (settings[0]?.setting_value !== '1') {
-            return res.status(403).json({ error: 'Registration is currently closed.' });
+            res.status(403).json({ error: 'Registration is currently closed.' });
+            return;
         }
 
         // 2. Insert into MySQL
         const [result]: any = await pool.query(
             `INSERT INTO contestants 
-            (full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, social_media, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`,
+            (full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, state_of_origin, department, social_media, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`,
             [
                 full_name, stage_name, email, phone,
                 talent_category, bio, photo_url, video_url,
+                state_of_origin, department,
                 JSON.stringify(social_media)
             ]
         );
 
-        // 3. Generate a contestant number/referral code (Optional post-processing)
         const contestantId = result.insertId;
-        const referralCode = `FGT2${contestantId}${Math.random().toString(36).substring(7).toUpperCase()}`;
+        const contestantNumber = 1000 + contestantId;
+        const referralCode = `${stage_name.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(36).substring(2, 5)}`;
 
         await pool.query(
             "UPDATE contestants SET contestant_number = ?, referral_code = ? WHERE id = ?",
-            [1000 + contestantId, referralCode, contestantId]
+            [contestantNumber, referralCode, contestantId]
         );
 
         res.status(201).json({
             message: 'Registration successful',
-            contestantId,
-            referralCode
+            contestant_number: contestantNumber,
+            referral_code: referralCode
         });
 
     } catch (err: any) {
         console.error('Registration Error:', err.message);
         if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(400).json({ error: 'This email is already registered.' });
+            res.status(400).json({ error: 'This email or stage name is already registered.' });
+            return;
         }
         res.status(500).json({ error: 'Server error during registration.' });
     }
 });
 
-/**
- * @route   GET /api/contestants
- * @desc    Get all contestants (Filtered by status for public view)
- * @access  Public
- */
+// Public list (limited info)
 router.get('/', async (req: Request, res: Response) => {
     try {
         const { status } = req.query;
@@ -75,15 +76,40 @@ router.get('/', async (req: Request, res: Response) => {
             query += ' WHERE status = ?';
             params.push(status);
         } else {
-            // By default, public only sees those who are at least screened
             query += " WHERE status NOT IN ('Pending', 'Eliminated')";
         }
 
         const [rows] = await pool.query(query, params);
         res.json(rows);
     } catch (err: any) {
-        console.error('Fetch Error:', err.message);
         res.status(500).json({ error: 'Failed to fetch contestants.' });
+    }
+});
+
+// Admin Only: Get all contestants (detailed)
+router.get('/admin/all', protectAdmin, async (req: Request, res: Response) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM contestants ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admin Only: Update contestant status
+router.patch('/:id/status', protectAdmin, async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { status, rejection_reason } = req.body;
+
+        await pool.query(
+            'UPDATE contestants SET status = ?, rejection_reason = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?',
+            [status, rejection_reason || null, id]
+        );
+
+        res.json({ message: 'Contestant status updated successfully' });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
     }
 });
 

@@ -7,6 +7,8 @@ import Prizes from './pages/Prizes';
 import Categories from './pages/Categories';
 import FAQ from './pages/FAQ';
 import Sponsors from './pages/Sponsors';
+import Login from './pages/admin/Login';
+import Dashboard from './pages/admin/Dashboard';
 import ScrollToAnchor from './components/ScrollToAnchor';
 import { PhaseProvider } from './context/PhaseContext';
 import './App.css';
@@ -24,6 +26,10 @@ const App: React.FC = () => {
                     <Route path="/categories" element={<Categories />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/sponsors" element={<Sponsors />} />
+
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<Login />} />
+                    <Route path="/admin/dashboard" element={<Dashboard />} />
                 </Routes>
             </Router>
         </PhaseProvider>

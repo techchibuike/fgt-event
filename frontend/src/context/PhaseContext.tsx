@@ -63,7 +63,7 @@ const defaultPhaseData: Record<number, PhaseInfo> = {
     7: {
         title: "GRAND FINALE",
         cta: "Join Live",
-        sub: "Titan Coronation",
+        sub: "The Great Coronation",
         nav: ['Venue', 'Tickets', 'Stream'],
         sections: ['Hero', 'Marquee', 'LiveStream', 'Leaderboard', 'Footer']
     },

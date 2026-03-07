@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 import pool from './services/mysql.js';
 import supabase from './services/supabase.js';
+import authRoutes from './routes/auth.js';
 import contestantRoutes from './routes/contestants.js';
 import settingsRoutes from './routes/settings.js';
 
@@ -25,8 +27,10 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/contestants', contestantRoutes);
 app.use('/api/settings', settingsRoutes);
 

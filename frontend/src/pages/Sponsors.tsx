@@ -23,7 +23,7 @@ const Sponsors: React.FC = () => {
                         GLOBAL SPONSORS
                     </h2>
                     <p className="text-white/40 max-w-2xl mt-8 text-lg font-light">
-                        The titans who make Season 2.0 possible. We are proud to partner with brands that believe in the power of student talent.
+                        The partners who make Season 2.0 possible. We are proud to partner with brands that believe in the power of student talent.
                     </p>
                 </div>
 
@@ -39,9 +39,9 @@ const Sponsors: React.FC = () => {
                 <div className="mt-32 p-16 border border-gold-500/20 bg-gold-500/5 rounded-3xl max-w-4xl mx-auto">
                     <h3 className="text-3xl font-bold text-white mb-6 uppercase tracking-tight">BECOME A SPONSOR</h3>
                     <p className="text-white/60 text-lg mb-10">
-                        Join us in empowering the next generation of creative titans. Reach out to our partnership team to explore sponsorship tiers.
+                        Join us in empowering the next generation of creative stars. Reach out to our partnership team to explore sponsorship tiers.
                     </p>
-                    <a href="mailto:partners@next-gentitan.com" className="inline-block gold-bg-gradient px-12 py-4 rounded-full text-black font-black uppercase tracking-widest shadow-xl shadow-gold-900/20 hover:scale-105 active:scale-95 transition-all">
+                    <a href="mailto:partners@fgt.alphoch.com" className="inline-block gold-bg-gradient px-12 py-4 rounded-full text-black font-black uppercase tracking-widest shadow-xl shadow-gold-900/20 hover:scale-105 active:scale-95 transition-all">
                         Get In Touch
                     </a>
                 </div>

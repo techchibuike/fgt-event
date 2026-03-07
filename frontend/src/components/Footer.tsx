@@ -16,7 +16,7 @@ const Footer: React.FC = () => (
                         <p className="text-sm text-white/60 leading-relaxed uppercase tracking-widest">
                             FUTO Student Center <br /> Owerri, Nigeria
                         </p>
-                        <p className="text-sm font-bold text-gold-500">hello@next-gentitan.com</p>
+                        <p className="text-sm font-bold text-gold-500">hello@fgt.alphoch.com</p>
                     </div>
                     <div className="space-y-6">
                         <span className="text-[10px] font-black uppercase tracking-[.3em] text-white/30">SYSTEM</span>

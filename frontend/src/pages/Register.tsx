@@ -120,7 +120,7 @@ const Register: React.FC = () => {
                                     "A high-quality 2-minute talent video.",
                                     "A professional headshot (Studio Recommended).",
                                     "Active social media presence.",
-                                    "Passion, grit, and the Titan spirit."
+                                    "Passion, grit, and the FGT spirit."
                                 ].map((req, i) => (
                                     <li key={i} className="flex gap-4 items-start text-white/50 text-sm italic">
                                         <span className="text-gold-500 font-bold">0{i + 1}</span>
@@ -143,7 +143,7 @@ const Register: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] uppercase tracking-[0.3em] font-black text-white/30">Stage Name</label>
-                                    <input name="stage_name" required value={formData.stage_name} onChange={handleChange} className="bg-transparent border-b border-white/10 py-4 focus:border-gold-500 outline-none transition-all placeholder:text-white/5" placeholder="MC Titan" />
+                                    <input name="stage_name" required value={formData.stage_name} onChange={handleChange} className="bg-transparent border-b border-white/10 py-4 focus:border-gold-500 outline-none transition-all placeholder:text-white/5" placeholder="MC Star" />
                                 </div>
                             </div>
 
@@ -202,7 +202,7 @@ const Register: React.FC = () => {
                                 disabled={loading}
                                 className={`w-full py-8 text-black font-black uppercase tracking-[0.5em] text-sm flex items-center justify-center gap-4 transition-all ${loading ? 'bg-neutral-800' : 'gold-bg-gradient active:scale-[0.98]'}`}
                             >
-                                {loading ? "SUBMITTING..." : "ENTER THE TITAN"}
+                                {loading ? "SUBMITTING..." : "ENTER THE STAGE"}
                             </button>
                         </form>
                     </div>
