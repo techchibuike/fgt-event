@@ -33,8 +33,8 @@ export const login = async (req, res) => {
         // Send token via secure cookie
         res.cookie('admin_token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            secure: true, // MUST be true for SameSite='none'
+            sameSite: 'none', // Allows cross-origin (localhost -> fgt.alphoch.com)
             maxAge: 8 * 60 * 60 * 1000 // 8 hours
         });
         res.json({
@@ -57,6 +57,10 @@ export const login = async (req, res) => {
  * @access  Private
  */
 export const logout = (req, res) => {
-    res.clearCookie('admin_token');
+    res.clearCookie('admin_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+    });
     res.json({ message: 'Logged out successfully' });
 };
