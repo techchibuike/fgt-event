@@ -10,6 +10,8 @@ CREATE TABLE contestants (
   bio TEXT,
   photo_url VARCHAR(255),
   video_url VARCHAR(255),
+  state_of_origin VARCHAR(100),
+  department VARCHAR(100),
   social_media JSON,
   status ENUM('Pending', 'Screened', 'Qualified', 'Finalist', 'Eliminated', 'Winner', 'Runner-up') DEFAULT 'Pending',
   contestant_number INT UNIQUE,

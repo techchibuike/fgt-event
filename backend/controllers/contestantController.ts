@@ -10,7 +10,8 @@ export const register = async (req: Request, res: Response) => {
     try {
         const {
             full_name, stage_name, email, phone,
-            talent_category, bio, photo_url, video_url, social_media
+            talent_category, bio, photo_url, video_url,
+            state_of_origin, department, social_media
         } = req.body;
 
         // Basic validation
@@ -27,8 +28,8 @@ export const register = async (req: Request, res: Response) => {
         const referralCode = stage_name.toLowerCase().replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(2, 5);
 
         const [result]: any = await pool.query(
-            'INSERT INTO contestants (full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, social_media, contestant_number, referral_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, JSON.stringify(social_media), nextNumber, referralCode]
+            'INSERT INTO contestants (full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, state_of_origin, department, social_media, contestant_number, referral_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [full_name, stage_name, email, phone, talent_category, bio, photo_url, video_url, state_of_origin, department, JSON.stringify(social_media), nextNumber, referralCode]
         );
 
         res.status(201).json({
@@ -41,10 +42,12 @@ export const register = async (req: Request, res: Response) => {
         try {
             await sendEmail(
                 email,
-                'FGT 2.0 - Application Received! 🎤',
+                "FGT 2.0 - Application Received! 🎤",
                 `<h1>Welcome to the Stage, ${stage_name}!</h1>
-                <p>Your application for FUTO GOT TALENT 2026 has been received.</p>
+                <p>Your application for FUTO'S GOT TALENT 2026 has been received.</p>
                 <p><strong>Contestant Number:</strong> ${nextNumber}</p>
+                <p><strong>Department:</strong> ${department}</p>
+                <p><strong>Talent:</strong> ${talent_category}</p>
                 <p><strong>Referral Code:</strong> ${referralCode}</p>
                 <p>Our team will review your submission and contact you soon.</p>`
             );

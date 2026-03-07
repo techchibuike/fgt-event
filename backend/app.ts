@@ -20,7 +20,10 @@ import contestantRoutes from './routes/contestants.js';
 import settingsRoutes from './routes/settings.js';
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://fgt.alphoch.com', 'https://alphoch.com'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Routes

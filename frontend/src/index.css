@@ -42,8 +42,9 @@ body {
 }
 
 .text-outline {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.5);
   color: transparent;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .gold-gradient {
